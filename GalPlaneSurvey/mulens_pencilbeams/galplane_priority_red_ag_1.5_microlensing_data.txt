@@ -1,0 +1,53 @@
+# Col 1: runName
+# Col 2: tE [days]
+# Col 3: Region number
+# Col 4: Region Gal lat [deg]
+# Col 5: Region Gal long [deg]
+# Col 6: median detect fraction
+# Col 7: Event rate in pencilbeam area per year
+# Col 8: Expected maximum number of events from LSST
+# Col 9: Expected recovered number of events from LSST
+galplane_priority_red_ag_1.5 30.0 0 280.0 0.0 0.52 1.91 19.14 9.95
+galplane_priority_red_ag_1.5 30.0 1 287.28 0.0 0.62 1.91 19.14 11.86
+galplane_priority_red_ag_1.5 30.0 2 295.39 -0.42 0.64 2.71 27.09 17.34
+galplane_priority_red_ag_1.5 30.0 3 306.43 -0.42 0.4 4.45 44.5 17.8
+galplane_priority_red_ag_1.5 30.0 4 320.15 -0.42 0.58 7.77 77.74 45.09
+galplane_priority_red_ag_1.5 30.0 5 324.52 -0.42 0.55 8.48 84.8 46.64
+galplane_priority_red_ag_1.5 30.0 6 341.38 -0.42 0.61 23.55 235.47 143.64
+galplane_priority_red_ag_1.5 30.0 7 351.58 -2.5 0.56 0.17 1.71 0.96
+galplane_priority_red_ag_1.5 30.0 8 0.11 -2.08 0.6 0.17 1.71 1.03
+galplane_priority_red_ag_1.5 30.0 9 8.42 -3.33 0.59 0.17 1.71 1.01
+galplane_priority_red_ag_1.5 30.0 10 17.37 -0.42 0.64 55.83 558.31 357.32
+galplane_priority_red_ag_1.5 30.0 11 26.32 -2.92 0.58 13.7 136.97 79.44
+galplane_priority_red_ag_1.5 30.0 12 44.01 -0.42 0.62 7.43 74.33 46.08
+galplane_priority_red_ag_1.5 30.0 13 54.41 0.0 0.0 8.05 0 0
+galplane_priority_red_ag_1.5 30.0 14 66.27 -0.42 0.0 0.17 0 0
+galplane_priority_red_ag_1.5 30.0 15 71.89 0.0 0.0 0.16 0 0
+galplane_priority_red_ag_1.5 30.0 16 80.0 -5.0 0.0 0.14 0 0
+galplane_priority_red_ag_1.5 30.0 17 280.47 -32.89 0.52 0.83 8.28 4.3
+galplane_priority_red_ag_1.5 30.0 18 302.81 -44.33 0.56 0.54 5.42 3.04
+Fraction of pencilbeams with min_events=10.0 = 0.5
+Average number of recovered events outside the Bulge = 23.8
+Average fraction of recovered events over all fields  = 0.6
+galplane_priority_red_ag_1.5 200.0 0 280.0 0.0 0.79 1.91 19.14 15.15
+galplane_priority_red_ag_1.5 200.0 1 287.28 0.0 0.83 1.91 19.14 15.95
+galplane_priority_red_ag_1.5 200.0 2 295.39 -0.42 0.83 2.71 27.09 22.58
+galplane_priority_red_ag_1.5 200.0 3 306.43 -0.42 0.75 4.45 44.5 33.37
+galplane_priority_red_ag_1.5 200.0 4 320.15 -0.42 0.83 7.77 77.74 64.78
+galplane_priority_red_ag_1.5 200.0 5 324.52 -0.42 0.85 8.48 84.8 72.44
+galplane_priority_red_ag_1.5 200.0 6 341.38 -0.42 0.92 23.55 235.47 215.85
+galplane_priority_red_ag_1.5 200.0 7 351.58 -2.5 0.84 0.17 1.71 1.44
+galplane_priority_red_ag_1.5 200.0 8 0.11 -2.08 0.88 0.17 1.71 1.5
+galplane_priority_red_ag_1.5 200.0 9 8.42 -3.33 0.9 0.17 1.71 1.53
+galplane_priority_red_ag_1.5 200.0 10 17.37 -0.42 0.9 55.83 558.31 500.15
+galplane_priority_red_ag_1.5 200.0 11 26.32 -2.92 0.88 13.7 136.97 119.85
+galplane_priority_red_ag_1.5 200.0 12 44.01 -0.42 0.81 7.43 74.33 60.39
+galplane_priority_red_ag_1.5 200.0 13 54.41 0.0 0.0 8.05 0 0
+galplane_priority_red_ag_1.5 200.0 14 66.27 -0.42 0.0 0.17 0 0
+galplane_priority_red_ag_1.5 200.0 15 71.89 0.0 0.0 0.16 0 0
+galplane_priority_red_ag_1.5 200.0 16 80.0 -5.0 0.0 0.14 0 0
+galplane_priority_red_ag_1.5 200.0 17 280.47 -32.89 0.77 0.83 8.28 6.38
+galplane_priority_red_ag_1.5 200.0 18 302.81 -44.33 0.88 0.54 5.42 4.74
+Fraction of pencilbeams with min_events=10.0 = 0.5
+Average number of recovered events outside the Bulge = 35.3
+Average fraction of recovered events over all fields  = 0.8

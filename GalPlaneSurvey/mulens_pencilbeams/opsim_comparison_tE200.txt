@@ -1,0 +1,11 @@
+# Col 1: runName
+# Col 2: tE
+# Col 3: Frac. pencilbeams with ≥ 10 events
+# Col 4: Mean Nevents/field outside the Bulge
+# Col 5: Median frac. Events recovered all fields
+baseline_v2.0  200 0.5  30.2  0.7
+plane_priority0.1_pbt 200 0.6  37.3  0.8
+galplane_priority_blue_ag_1.5  200  0.5  35.5  0.9
+galplane_priority_blue_ag_2.0  200  0.5  31.0  0.8
+galplane_priority_red_ag_1.5   200  0.5  35.3  0.8
+galplane_priority_red_ag_2.0   200  0.5  31.2  0.8

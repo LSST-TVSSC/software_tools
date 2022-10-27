@@ -1,0 +1,4 @@
+python objdetect_galplane_map.py /Users/rstreet1/software/LSST-TVS_software_tools/footprint_maps/ 
+/Users/rstreet1/software/LSST-TVS_software_tools/footprint_maps/priority_GalPlane_map_mollweide_sum.fits 
+priority_GalPlane_footprint_map_data r 
+/Users/rstreet1/software/LSST-TVS_software_tools/GalPlaneSurvey/HighCadenceZone/test/ 1.5 2.1 0.1
