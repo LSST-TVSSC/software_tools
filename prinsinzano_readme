@@ -1,0 +1,117 @@
+J/A+A/XX/XX Low mass young stars in the Milky Way from Gaia (Prisinzano+, 2022)
+================================================================================
+Low mass young stars in the Milky Way unveiled by DBSCAN and Gaia EDR3. Mapping 
+the star forming regions within 1.5 Kpc
+    L. Prisinzano, F. Damiani, S. Sciortino, E. Flaccomio, M. G. Guarcello, 
+    G. Micela, E. Tognelli, R. D. Jeffries, J. M. Alcala'
+   <Astron. Astrophys. XXX, XXX (2022)>
+   =2022A&A...XXXX        (SIMBAD/NED BibCode)
+================================================================================
+ADC_Keywords: YSOs; Stars, pre-main sequence; Clusters, open; Fundamental 
+	      catalog; Galactic plane; Milky Way;
+Keywords: methods: data analysis - stars: formation, pre-main sequence - Galaxy:
+                  open clusters and associations: general - catalogues - surveys
+
+Abstract: Stars form in clusters and are mainly distributed in the Galactic 
+    disk.
+    Mapping the youngest stellar populations of the Milky Way is crucial to 
+    characterise the Galactic spiral arms and shed light on star and planet
+    formation theories. By combining the unprecedented astrometric precision
+    of Gaia EDR3 data, a machine learning unsupervised clustering algorithm,
+    and the stellar evolutionary properties from the exquisite Gaia 
+    color-absolute magnitude diagrams, we identified  124 440 young low mass
+    stars clustered in 354 star forming regions (SFRs) younger than 10 Myr 
+    within about 1.5 Kpc.   In addition, 65 863 low mass members of 322 open
+    clusters (OCs) located within about 500 pc and with ages 10 Myr<t<100 Myr
+    were also found.
+    A substantial number of them are recognised for the first time and the bulk
+    of previously known star forming regions are also detected enabling us to 
+    homogeneously single out the asymmetric complex structure of the Galaxy 
+    in the solar neighbourhood. 
+    The catalogue can serve as base for future studies on  star 
+    formation history, cluster dynamics, and Initial Mass Function, as well 
+    as detailed studied of circumstellar disk evolution and search for young
+    giant planets by direct imaging.
+Description: Gaia EDR3 astrometric and kinematic parameters (l, b, parallaxes 
+	and proper motions) and photometry in three broad bands (G, G_BP, G_RP)
+	in the Galactic Plane (b|<30 deg) were used to select, with the machine
+	learning  clustering algorithm DBSCAN, clusters kinematically and 
+	spatially coerent. A subsample of 52 clusters, selected among the 7323
+	found with DBSCAN, has been used as template data set, to identify very
+	young clusters from the pattern of  the observed colour-absolute 
+	magnitude diagrams through a pattern match process.
+    	Table 3 presents some properties of the SFRs and the OCs found in this 
+    	work. It includes an identification number, the median of the Galactic 
+    	coordinates of the members, the radius containing half of the members,
+    	the cluster distance obtained as the median of inverted parallaxes of
+    	members and the total number of members. A flag from 1 to 28 is assigned
+    	to the SFRs with ages t < 10 Myr and from 29 to 36 to the OCs with ages
+    	10 Myr < t <100 Myr. The literature cluster names given in the last 
+    	column are mainly taken from Cantat-Gaudin & Anders (2020) or Zucker et
+    	al. (2020) or from Simbad, and are only indicative of the region.
+    	Table 4  lists the Gaia EDR3 data (source identification, Galactic 
+    	coordinates, parallax, proper motion and G, BP, RP magnitudes) of members
+    	found for the SFRs and the OCs presented in Table 3. The flag and the 
+        identification number of the cluster to which they belong are also 
+        given.
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName    Lrecl  Records  Explanations
+--------------------------------------------------------------------------------
+ReadMe          80        .  This file
+table3.dat      74      676  
+table4.dat     120   190303  
+
+See also:
+	
+Byte-by-byte Description of file: table3.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label     Explanations
+--------------------------------------------------------------------------------
+   3-  5   I3    --- Cluster_ID   ID of SFRs and young stellar clusters
+   7- 14   F8.3  deg GLON 	  Median Galactic longitude of members 
+  17- 23   F7.3  deg GLAT 	  Median Galactic latitude  of members
+  27- 32   F6.3  deg r50 	  Radius containing half of the members (r50)
+  37- 40   I4    pc  d 		  Median of inverted parallaxes of members 
+  44- 48   I5    --- N 		  Number of members  
+  53- 54   I2    --- Flag 	  Flag ([1:28] for SFRs; [29:36] for OCs)
+  58- 73   A16   --- Name 	  Literature cluster name	
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Byte-by-byte Description of file: table4.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label     Explanations
+--------------------------------------------------------------------------------
+   7- 25   I19   --- Source_ID    Gaia EDR3 unique source identifier 
+  27- 33   F7.3  --- l           Galactic longitude   
+  35- 41   F7.3  --- b           Galactic latitude 
+  44- 49   F6.3  --- Plx         Corrected parallax  
+  53- 57   F5.3  --- e_Plx       Standard error of parallax 
+  59- 65   F7.3  --- pmRA        Proper motion in RA direction
+  69- 73   F5.3  --- e_pmRA      Standard error of proper motion in RA
+  75- 81   F7.3  --- pmDE        Proper motion in Dec
+  85- 89   F5.3  --- e_pmDE      Standard error of proper motion in Dec 
+  92- 96   F5.2  --- Gmag        G-band mean magnitude
+  99-103   F5.2  --- BPmag       ? Integrated BP mean magnitude
+ 106-110   F5.2  --- GPmag       Integrated RP mean magnitude 
+ 112-113   I2    --- Flag        Flag ([1:28] for SFRs; [29:36] for OCs)
+ 117-119   I3    --- Cluster_ID  Table 3 Cluster ID
+
+
+Acknowledgements:  Loredana Prisinzano, loredana.prisinzano(at)inaf.it
+
+References: 
+    Gaia Early Data Release 3: Summary of the contents and survey properties
+   Brown, A.G.A., et al., 2020A&A...649A...1G 2020A&A...649A...1G
+
+  Gaia Early Data Release 3: The astrometric solution
+   Lindegren, L., et al., 2020A&A...649A...2L 2020A&A...649A...2L 
+
+  Gaia Early Data Release 3: Photometric content and validation
+   Riello, M., et al., 2020A+&...649A...3R 2020A+&...649A...3R, Cat. J/A+A/649/A3
+
+  Gaia Early Data Release 3: Parallax bias versus magnitude, colour and position
+   Lindegren, L., et al., 2020A&A...649A...4L 2020A&A...649A...4L
+
+================================================================================

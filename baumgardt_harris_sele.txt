@@ -1,0 +1,56 @@
+Cluster,	Cluster identification
+RA,		Right ascension						     
+DEC,		Declination						     
+GAL_L,		Galactic longitude					     
+GAL_B,		Galactic latitude					     
+R_Sun, DR_Sun,	Distance from Sun +err					     
+R_GC, DR_GC,	Distance from the Galactic centre +err					     	
+Mass, DMass, 	Cluster mass																			       
+V_mag, DV_mag,	Apparent V-band magnitude and error from Baumgardt et al. (2020)												       	
+M/L_V, DM/L_V,	V-band M/L ratio																		       	
+rc,		Core radius using the Spitzer (1987) definition															       
+rh_l,		Projected half-light radius																	       
+rh_m,		Half-mass radius (3D)																		       
+rt,		Tidal radius according to eq. 8 of Webb et al. (2013), ApJ 764, 124												       
+rho_c,		Core density																			       
+rho_h_m,	Density inside half-mass radius
+RV, ERV,	Radial velocity						     
+sig0,		Central 1D velocity dispersion																	       
+mualpha,emualpha,  Proper motion in right ascension +err					     			     	
+mu_delta,emudelta, Proper motion in declination	+err					     			     	
+rhopmrad,	Correlation coefficient pm
+sig_c,		Core density
+sig_h_m,	Half Mass density
+Trh,		Half-mass relaxation time																	       
+MF,		Global mass function slope of 0.2 to 0.8M main-sequence stars, alphaKroupa=-1.50 over this range. Values in red indicate clusters where the MF is based on observations. 
+F_REM,		Mass fraction of remnants. Error bars only available for those clusters where the photometry includes a significant fraction of the cluster stars.		          
+vesc,		Central escape velocity																		       
+etac,		Mass segregation parameter from Trenti & van der Marel (2013) for stars in the core and in the mass range 0.5 to 0.8						    
+etah,		Mass segregation parameter from Trenti & van der Marel (2013) for stars at the half-mass radius and in the mass range 0.5 to 0.8                                    
+A_Rot, DA_Rot,	Rotation velocity A from Sollima, Baumgardt & Hilker (2019)
+P_Rot,		Probability that a cluster is rotating from Sollima, Baumgardt & Hilker (2019)
+X, DX,		Distance from the Gal. centre in direction of Sun	     
+Y, DY,		Distance from the Gal. centre in direction of Solar motion   
+Z, DZ,		Distance above/below galactic plane			     
+U, DU,		Velocity in X direction					     
+V, DV,		Velocity in Y direction					     
+W, DW,		Velocity in Z direction					     
+RPERI, ERPERI,	Average perigalactic distance				     	
+RAPO, ERAPO,	Average apogalactic distance                                 	
+[Fe/H],		Metallicity [Fe/H]							    
+E(B-V),		Foreground reddening						    
+V_HB,		V magnitude level of the horizontal branch (or RR Lyraes)		    
+V_t,		Integrated V magnitude of the cluster				    
+M_V_t,		Absolute visual magnitude (cluster luminosity),  M_V,t = V_t - (m-M)V   
+U-B,		Integrated color indices (uncorrected for reddening)		    
+B-V,		Integrated color indices (uncorrected for reddening)		    
+V-R,		Integrated color indices (uncorrected for reddening)		    
+V-I,		Integrated color indices (uncorrected for reddening)		    
+spt,		Spectral type of the integrated cluster light			    
+ellip,		Projected ellipticity of isophotes, e = 1-(b/a)                         
+v_r, ev_r,	Heliocentric radial velocity (km/s)								  
+v_LSR,		Radial velocity relative to Solar neighborhood LSR						  
+sig_v,esig_v,	Central velocity dispersion sig_v (km/s)							  	
+c, coll,	King-model central concentration, c = log(r_t/r_c); a 'c' denotes a core-collapsed cluster	  	
+r_c,		Core radius in arcmin									  
+r_h,		Half-light radius in arcmin                                                                   
