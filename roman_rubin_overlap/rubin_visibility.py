@@ -6,14 +6,14 @@ from astropy.coordinates import get_sun
 import numpy as np
 import copy
 
-def visibility_over_date_range(target, dates, min_alt=30.0, verbose=False):
+def visibility_over_date_range(target, dates, min_alt=20.0, verbose=False):
     visibility_table = np.zeros(len(dates))
     for t, obs_date in enumerate(dates):
         visibility_table[t] = calculate_visibility(target, obs_date)
 
     return visibility_table
 
-def calculate_visibility(target, obs_date, min_alt=30.0, verbose=False):
+def calculate_visibility(target, obs_date, min_alt=20.0, verbose=False):
     """Method to calculate the visibility of a given RA and Dec from the Rubin
     Observatory for a specific date.
 
