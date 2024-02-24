@@ -2,3 +2,4 @@ pywcsgrid2/
 dust_maps
 test_file.fits
 .ipynb_checkpoints/
+venv/
