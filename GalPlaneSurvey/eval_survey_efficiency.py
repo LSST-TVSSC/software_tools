@@ -11,9 +11,9 @@ from astropy import units as u
 #from astropy_healpix import HEALPix
 from astropy.coordinates import Galactic, TETE, SkyCoord
 from astropy.io import fits
-from sys import path as pythonpath
+#from sys import path as pythonpath
 #pythonpath.append('/Users/rstreet1/software/rubin_sim_gal_plane/rubin_sim/maf/metrics/')
-from rubin_sim.maf.metrics import galacticPlaneMetrics
+#from rubin_sim.maf.metrics import galactic_plane_metrics
 import compare_survey_footprints
 
 NSIDE = 64
@@ -39,7 +39,7 @@ def run_metrics(params):
 
     # Load the current OpSim database
     runName = os.path.split(params['opSim_db_file'])[-1].replace('.db', '')
-    opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
+    #opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
 
     # Load the Galactic Plane Survey footprint map data
     map_data_table = compare_survey_footprints.load_map_data(params['map_file_path'])
@@ -83,7 +83,7 @@ def run_metrics(params):
 def eval_nvisits(runName, bundleDict, desired_healpix, FoM):
 
     outputName = runName.replace('.','_')+'_Nvis_fiveSigmaDepth_gt_21_5_HEAL'
-    metricData = bundleDict[outputName].metricValues.filled(0.0)
+    metricData = bundleDict[outputName].metric_values.filled(0.0)
 
     # Calculate the median number of visits per HEALpixel in the
     # desired survey region:
@@ -97,7 +97,7 @@ def eval_nvisits(runName, bundleDict, desired_healpix, FoM):
 def eval_shutter_fraction(runName, desired_healpix, bundleDict, FoM):
 
     outputName = runName.replace('.','_')+'_OpenShutterFraction_fiveSigmaDepth_gt_21_5_HEAL'
-    metricData = bundleDict[outputName].metricValues.filled(0.0)
+    metricData = bundleDict[outputName].metric_values.filled(0.0)
 
     # Calculate the median shutterFrac for the given desired region:
     FoM.shutterFrac_median = np.median(metricData[desired_healpix])
@@ -110,19 +110,19 @@ def eval_shutter_fraction(runName, desired_healpix, bundleDict, FoM):
 def calcMetrics(params, opsim_db, runName, diagnostics=False):
 
     bundleList = []
-    metric1 = maf.metrics.CountMetric(col=['night'], metricName='Nvis')
-    metric2 = maf.metrics.technicalMetrics.OpenShutterFractionMetric()
+    metric1 = maf.metrics.simple_metrics.CountMetric(col=['night'], metric_name='Nvis')
+    metric2 = maf.metrics.technical_metrics.OpenShutterFractionMetric()
     constraint = 'fiveSigmaDepth > 21.5'
-    slicer = maf.slicers.HealpixSlicer(nside=NSIDE, useCache=False)
+    slicer = maf.slicers.healpix_slicer.HealpixSlicer(nside=NSIDE, use_cache=False)
     plotDict = {'colorMax': 950}
-    bundleList.append(maf.MetricBundle(metric1, slicer, constraint, runName=runName, plotDict=plotDict))
-    bundleList.append(maf.MetricBundle(metric2, slicer, constraint, runName=runName, plotDict=plotDict))
-    bundleDict = maf.metricBundles.makeBundlesDictFromList(bundleList)
-    bundleGroup = maf.MetricBundleGroup(bundleDict, opsim_db, outDir=params['output_dir'], resultsDb=None)
-    bundleGroup.runAll()
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric1, slicer, constraint, run_name=runName, plot_dict=plotDict))
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric2, slicer, constraint, run_name=runName, plot_dict=plotDict))
+    bundleDict = maf.metric_bundles.metric_bundle_group.make_bundles_dict_from_list(bundleList)
+    bundleGroup = maf.metric_bundles.metric_bundle_group.MetricBundleGroup(bundleDict, opsim_db, out_dir=params['output_dir'], results_db=None)
+    bundleGroup.run_all()
 
     if diagnostics:
-        bundleGroup.plotAll(closefigs=False)
+        bundleGroup.plot_all(close_figs=False)
 
     return bundleDict
 

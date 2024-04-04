@@ -13,7 +13,7 @@ from astropy.coordinates import Galactic, TETE, SkyCoord
 from astropy.io import fits
 from sys import path as pythonpath
 #pythonpath.append('/Users/rstreet1/software/rubin_sim_gal_plane/rubin_sim/maf/metrics/')
-from rubin_sim.maf.metrics import galacticPlaneMetrics
+from rubin_sim.maf.metrics import galactic_plane_metrics
 
 NSIDE = 64
 NPIX = hp.nside2npix(NSIDE)
@@ -42,7 +42,7 @@ def run_metrics(params):
 
     # Load the current OpSim database
     runName = os.path.split(params['opSim_db_file'])[-1].replace('.db', '')
-    opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
+    #opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
 
     # Load the Galactic Plane Survey footprint map data
     map_data_table = load_map_data(params['map_file_path'])
@@ -63,7 +63,7 @@ def run_metrics(params):
         print('Calculating survey region overlap for '+mapName)
 
         # Calculate the metrics for this science map
-        bundleDict = calcNVisits(opsim_db, runName, mapName, diagnostics=False)
+        bundleDict = calcNVisits(params['opSim_db_file'], runName, mapName, diagnostics=False)
         print(bundleDict.keys())
 
         #test_bundle(bundleDict, mapName, 'STEP 1:')
@@ -123,7 +123,7 @@ def run_metrics(params):
 def test_bundle(bundleDict, mapName, marker):
     print(marker+': '+mapName)
     outputName = 'GalplaneFootprintMetric_'+mapName+'_NObsPriority'
-    metricData = bundleDict[outputName].metricValues.filled(0.0)
+    metricData = bundleDict[outputName].metric_values.filled(0.0)
     idx = np.argwhere(np.isnan(metricData))
     print('   NaN values: ',idx)
     print('   metricData entries: ',metricData[idx])
@@ -162,7 +162,7 @@ def calcFootprintOverlap(params,runName, mapName, tau_obs,
 
     ## Explore the survey regions covered at least sufficient cadence
     outputName = rootName+'Tau_'+str(tau_obs).replace('.','_')
-    metricData = bundleDict[outputName].metricValues.filled(0.0)
+    metricData = bundleDict[outputName].metric_values.filled(0.0)
 
     sampled_healpix = np.where(metricData > 0.0)[0]
 
@@ -209,7 +209,7 @@ def eval_footprint_priority(params,map_data, runName, mapName, tau_obs,
 
     ## Explore the survey regions covered at least sufficient cadence
     outputName = rootName+'Tau_'+str(tau_obs).replace('.','_')
-    metricData = bundleDict[outputName].metricValues.filled(0.0)
+    metricData = bundleDict[outputName].metric_values.filled(0.0)
 
     # Using the HEALpix map of the survey footprint which received
     # above the threshold number of observations for this value of tau,
@@ -236,8 +236,8 @@ def eval_footprint_nobs_priority(params,map_data, runName, mapName, tau_obs,
                             verbose=False):
 
     ### NObsPriority per HEALpix as a function of tau_obs
-    outputName = 'GalplaneFootprintMetric_'+mapName+'_NObsPriority'
-    metricData = bundleDict[outputName].metricValues.filled(0.0)
+    outputName = 'GalplaneFootprintMetric_'+mapName+'_n_obs_priority'
+    metricData = bundleDict[outputName].metric_values.filled(0.0)
 
     if verbose:
         print(mapName)
@@ -332,19 +332,19 @@ def calcNVisitsThresholds():
 def calcNVisits(opsim_db, runName, mapName, diagnostics=False):
 
     bundleList = []
-    metric1 = maf.metrics.CountMetric(col=['night'], metricName='Nvis')
-    metric2 = galacticPlaneMetrics.GalPlaneFootprintMetric(science_map=mapName)
+    metric1 = maf.metrics.simple_metrics.CountMetric(col=['night'], metric_name='Nvis')
+    metric2 = galactic_plane_metrics.GalPlaneFootprintMetric(science_map=mapName)
     constraint = 'fiveSigmaDepth > 21.5'
-    slicer = maf.slicers.HealpixSlicer(nside=NSIDE, useCache=False)
+    slicer = maf.slicers.healpix_slicer.HealpixSlicer(nside=NSIDE, use_cache=False)
     plotDict = {'colorMax': 950}
-    bundleList.append(maf.MetricBundle(metric1, slicer, constraint, runName=runName, plotDict=plotDict))
-    bundleList.append(maf.MetricBundle(metric2, slicer, constraint, runName=runName, plotDict=plotDict))
-    bundleDict = maf.metricBundles.makeBundlesDictFromList(bundleList)
-    bundleGroup = maf.MetricBundleGroup(bundleDict, opsim_db, outDir='test', resultsDb=None)
-    bundleGroup.runAll()
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric1, slicer, constraint, run_name=runName, plot_dict=plotDict))
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric2, slicer, constraint, run_name=runName, plot_dict=plotDict))
+    bundleDict = maf.metric_bundles.metric_bundle_group.make_bundles_dict_from_list(bundleList)
+    bundleGroup = maf.metric_bundles.metric_bundle_group.MetricBundleGroup(bundleDict, opsim_db, out_dir='test', results_db=None)
+    bundleGroup.run_all()
 
     if diagnostics:
-        bundleGroup.plotAll(closefigs=False)
+        bundleGroup.plot_all(close_figs=False)
 
     return bundleDict
 

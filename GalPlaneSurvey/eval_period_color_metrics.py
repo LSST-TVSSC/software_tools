@@ -13,14 +13,14 @@ from astropy import units as u
 #from astropy_healpix import HEALPix
 from astropy.coordinates import Galactic, TETE, SkyCoord
 from astropy.io import fits
-from rubin_sim.maf.metrics import periodicDetectMetric, cadenceMetrics
+from rubin_sim.maf.metrics import periodic_detect_metric, cadence_metrics
 from rubin_sim.maf.mafContrib import periodicStarMetric, periodicStarModulationMetric
-from rubin_sim.maf.mafContrib import YoungStellarObjectsMetric
+#from rubin_sim.maf.mafContrib import YoungStellarObjectsMetric
 from rubin_sim.maf.mafContrib import microlensingMetric
 import compare_survey_footprints
 
 # Needs old lsst.maf import statements updated
-from LSSTunknowns.tdAdnom import filterPairTGapsMetric
+#from LSSTunknowns.tdAdnom import filterPairTGapsMetric
 
 NSIDE = 64
 NPIX = hp.nside2npix(NSIDE)
@@ -225,8 +225,9 @@ def calc_mapbased_metrics(opsim_db, runName, diagnostics=False):
     plotDict = {'colorMax': 950}
     #metricList.append(maf.metrics.CountMetric(col=['night'], metricName='Nvis'))
 
+    #
     metricList.append(cadenceMetrics.UniformityMetric())
-    metricList.append(YoungStellarObjectsMetric.NYoungStarsMetric())
+#    metricList.append(YoungStellarObjectsMetric.NYoungStarsMetric())
 
     metricList.append(filterPairTGapsMetric.filterPairTGapsMetric(fltpair=['g', 'i'],
                                                         mag_lim=[21, 21],

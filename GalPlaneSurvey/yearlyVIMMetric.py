@@ -5,13 +5,13 @@
 ################################################################################################
 from types import MethodType
 import numpy as np
-from rubin_sim.utils import calcSeason
-from rubin_sim.maf.maps.galacticPlanePriorityMaps import (
+from rubin_scheduler.utils.season_utils import calc_season
+from rubin_sim.maf.maps.galactic_plane_priority_maps import (
     gp_priority_map_components_to_keys,
 )
-from rubin_sim.maf.metrics.galacticPlaneMetrics import galplane_priority_map_thresholds
-from rubin_sim.maf.metrics.seasonMetrics import findSeasonEdges
-from rubin_sim.maf.metrics.baseMetric import BaseMetric
+from rubin_sim.maf.metrics.galactic_plane_metrics import galplane_priority_map_thresholds
+from rubin_sim.maf.metrics.season_metrics import find_season_edges
+from rubin_sim.maf.metrics.base_metric import BaseMetric
 
 __all__ = [
     "calc_interval_decay",

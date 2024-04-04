@@ -1,7 +1,7 @@
 import os
 from sys import argv
-from sys import path as pythonpath
-pythonpath.append('/Users/rstreet1/software/rubin_sim_gal_plane/rubin_sim/maf/metrics/')
+#from sys import path as pythonpath
+#pythonpath.append('/Users/rstreet1/software/rubin_sim_gal_plane/rubin_sim/maf/metrics/')
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ from astropy import units as u
 #from astropy_healpix import HEALPix
 from astropy.coordinates import Galactic, TETE, SkyCoord
 from astropy.io import fits
-from rubin_sim.maf.metrics import galplaneTimeSamplingMetrics
+from rubin_sim.maf.metrics import galplane_time_sampling_metrics
 import compare_survey_footprints
 import yearlyVIMMetric
 
@@ -26,7 +26,7 @@ def run_metrics(params):
 
     # Load the current OpSim database
     runName = os.path.split(params['opSim_db_file'])[-1].replace('.db', '')
-    opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
+    #opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
 
     # Load the Galactic Plane Survey footprint map data
     map_data_table = load_map_data(params['map_file_path'])
@@ -110,7 +110,7 @@ def eval_metrics_by_region(params,bundleDict,map_data,runName,mapName,tau,
     FoM.mapName = mapName
 
     outputName1 = runName.replace('.','_')+'_YearlyVIMMetric_'+mapName+'_fiveSigmaDepth_gt_21_5_HEAL'
-    metricData = bundleDict[outputName1].metricValues.filled(0.0)
+    metricData = bundleDict[outputName1].metric_values.filled(0.0)
 
     sums = np.zeros(10)
 
@@ -134,8 +134,7 @@ def calc_VIM(params,runName,mapName,tau,bundleDict,desired_healpix,FoM):
     plt.rcParams['font.size'] = 22
 
     outputName1 = 'YearlyVIMMetric_'+mapName+'_Tau_'+str(tau).replace('.','_')
-    metricData = bundleDict[outputName1].metricValues.filled(0.0)
-
+    metricData = bundleDict[outputName1].metric_values.filled(0.0)
 
     min = metricData[desired_healpix].min()
     max = metricData[desired_healpix].max()
@@ -150,9 +149,9 @@ def calc_VIM(params,runName,mapName,tau,bundleDict,desired_healpix,FoM):
     ideal_sum = float(len(desired_healpix))
     FoM.percent_sumVIM = (FoM.sumVIM / ideal_sum)*100.0
 
-    Fn14 = galplaneTimeSamplingMetrics.calc_interval_decay(np.array([tau*4.0]), tau)[0]
-    Fn12 = galplaneTimeSamplingMetrics.calc_interval_decay(np.array([tau*2.0]), tau)[0]
-    Fn34 = galplaneTimeSamplingMetrics.calc_interval_decay(np.array([tau*4.0/3.0]), tau)[0]
+    Fn14 = galplane_time_sampling_metrics.calc_interval_decay(np.array([tau*4.0]), tau)[0]
+    Fn12 = galplane_time_sampling_metrics.calc_interval_decay(np.array([tau*2.0]), tau)[0]
+    Fn34 = galplane_time_sampling_metrics.calc_interval_decay(np.array([tau*4.0/3.0]), tau)[0]
     FoM.VIMdecayFn14 = Fn14*float(len(desired_healpix))
     FoM.VIMdecayFn12 = Fn12*float(len(desired_healpix))
     FoM.VIMdecayFn34 = Fn34*float(len(desired_healpix))
@@ -174,7 +173,7 @@ def plot_cumulative_VIM(params,runName,mapName,map_data,bundleDict,desired_healp
         cumData = {'x': xdata[idx]}
         for tau in tau_obs:
             outputName1 = 'GalPlaneVisitIntervalsTimescales_'+mapName+'_Tau_'+str(tau).replace('.','_')
-            metricData = bundleDict[outputName1].metricValues.filled(0.0)
+            metricData = bundleDict[outputName1].metric_values.filled(0.0)
 
             ydata = np.cumsum(metricData[idx])
 
@@ -212,7 +211,7 @@ def calc_SVGM(params,runName,mapName,tau,bundleDict,desired_healpix,FoM,datalog=
     tau_var = tau * 5.0
 
     outputName2 = 'GalPlaneSeasonGapsTimescales_'+mapName+'_Tau_'+str(tau_var).replace('.','_')
-    metricData = bundleDict[outputName2].metricValues.filled(0.0)
+    metricData = bundleDict[outputName2].metric_values.filled(0.0)
     if datalog:
         datalog.write('calc_SVGM: metricData '+repr(metricData[0:10])+'\n')
         datalog.write('calc_SVGM: metricData range='+str(metricData.min())+' '+str(metricData.max())+'\n')
@@ -261,7 +260,7 @@ def calc_VIP(params,runName,mapName,map_data,tau,bundleDict,desired_healpix,FoM)
     plt.rcParams['font.size'] = 22
 
     outputName1 = 'GalPlaneVisitIntervalsTimescales_'+mapName+'_Tau_'+str(tau).replace('.','_')
-    metricData = bundleDict[outputName1].metricValues.filled(0.0)
+    metricData = bundleDict[outputName1].metric_values.filled(0.0)
 
     metric1_healpix = np.zeros(NPIX)
     metric1_healpix[desired_healpix] = metricData[desired_healpix]
@@ -279,9 +278,9 @@ def calc_VIP(params,runName,mapName,map_data,tau,bundleDict,desired_healpix,FoM)
     ideal_priority = map_data[desired_healpix].sum()
     FoM.percent_sumVIP = (FoM.sumVIP / ideal_priority)*100.0
 
-    Fn14 = galplaneTimeSamplingMetrics.calc_interval_decay(np.array([tau*4.0]), tau)
-    Fn12 = galplaneTimeSamplingMetrics.calc_interval_decay(np.array([tau*2.0]), tau)
-    Fn34 = galplaneTimeSamplingMetrics.calc_interval_decay(np.array([tau*4.0/3.0]), tau)
+    Fn14 = galplane_time_sampling_metrics.calc_interval_decay(np.array([tau*4.0]), tau)
+    Fn12 = galplane_time_sampling_metrics.calc_interval_decay(np.array([tau*2.0]), tau)
+    Fn34 = galplane_time_sampling_metrics.calc_interval_decay(np.array([tau*4.0/3.0]), tau)
     FoM.VIPdecayFn14 = (Fn14*map_data[desired_healpix]).sum()
     FoM.VIPdecayFn12 = (Fn12*map_data[desired_healpix]).sum()
     FoM.VIPdecayFn34 = (Fn34*map_data[desired_healpix]).sum()
@@ -313,13 +312,13 @@ def calc_cadence_metrics(opsim_db, runName, mapName, diagnostics=False):
     metric = yearlyVIMMetric.YearlyVIMMetric(science_map=mapName)
 
     constraint = 'fiveSigmaDepth > 21.5'
-    slicer = maf.slicers.HealpixSlicer(nside=NSIDE, useCache=False)
+    slicer = maf.slicers.healpix_slicer.HealpixSlicer(nside=NSIDE, use_cache=False)
     plotDict = {'colorMax': 950}
 
-    bundleList.append(maf.MetricBundle(metric, slicer, constraint, runName=runName, plotDict=plotDict))
-    bundleDict = maf.metricBundles.makeBundlesDictFromList(bundleList)
-    bundleGroup = maf.MetricBundleGroup(bundleDict, opsim_db, outDir='test', resultsDb=None)
-    bundleGroup.runAll()
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric, slicer, constraint, run_name=runName, plot_dict=plotDict))
+    bundleDict = maf.metric_bundles.metric_bundle_group.make_bundles_dict_from_list(bundleList)
+    bundleGroup = maf.metric_bundles.metric_bundle_group.MetricBundleGroup(bundleDict, opsim_db, out_dir='test', results_db=None)
+    bundleGroup.run_all()
 
     return bundleDict
 

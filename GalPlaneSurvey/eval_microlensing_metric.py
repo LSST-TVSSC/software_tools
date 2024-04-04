@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import rubin_sim.maf as maf
 from rubin_sim.data import get_data_dir
 from rubin_sim.data import get_baseline
-from rubin_sim.utils import hpid2RaDec, equatorialFromGalactic
+#from rubin_sim.utils import hpid2RaDec, equatorialFromGalactic
+from rubin_scheduler.utils import healpy_utils
 import healpy as hp
 from astropy import units as u
 from astropy.coordinates import Galactic, TETE, SkyCoord
@@ -28,7 +29,7 @@ def run_metrics(params):
 
     # Load the current OpSim database
     runName = os.path.split(params['opSim_db_file'])[-1].replace('.db', '')
-    opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
+    #opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
 
     # Load the Galactic Plane Survey footprint map data
     map_data_table = compare_survey_footprints.load_map_data(params['map_file_path'])
@@ -72,14 +73,14 @@ def run_metrics(params):
 
         map = np.zeros(NPIX)
         for i in range(0,nevents_per_hp,1):
-            metric_data = calc_microlensing_metrics(opsim_db, runName, desired_healpix,
-                                                    peak_times[i], impact_parameters[i], crossing_times[i])
-            print(metric_data)
-            print(np.where(metric_data == np.nan))
+            metric_data = calc_microlensing_metrics(params['opSim_db_file'], runName, desired_healpix,
+                                                    peak_times[i], impact_parameters[i], crossing_times[i],
+                                                    metric_calc=params['metric_calc'])
+
             map[:] += metric_data[:]
 
         metric_maps[tau] = map
-        file_name = os.path.join(params['output_dir'], runName+'_'+mapName+'_'+str(round(tau,0))+'_microlensingDetect.png')
+        file_name = os.path.join(params['output_dir'], runName+'_'+mapName+'_'+str(round(tau,0))+'_microlensing_'+params['metric_calc']+'.png')
         compare_survey_footprints.plot_map_data(map, file_name, range=[0,nevents_per_hp])
 
     #Products:
@@ -100,6 +101,8 @@ def run_metrics(params):
 
         for tau in tau_range:
             metric_data = metric_maps[tau]
+            print(metric_data)
+            breakpoint
             print(metric_data[desired_healpix])
 
             FoM = MicrolensingFiguresOfMerit()
@@ -193,8 +196,12 @@ def regional_microlensingSlicer(desired_healpix,tau,
     peak_times = np.random.uniform(low=t_start, high=t_end, size=n_entries)
     impact_paramters = np.random.uniform(low=0, high=1, size=n_entries)
 
-    gal_l, gal_b = hpid2RaDec(NSIDE, desired_healpix, nest=True)
-    ra, dec = equatorialFromGalactic(gal_l, gal_b)
+    gal_l, gal_b = healpy_utils._hpid2_ra_dec(NSIDE, desired_healpix, nest=True)
+    s = SkyCoord(gal_l, gal_b, frame="galactic", unit=(u.rad, u.rad))
+    s.transform_to('icrs')
+    #ra, dec = equatorialFromGalactic(gal_l, gal_b)
+    ra = s.ra.rad
+    dec = s.dec.rad
 
     use_method_1 = False
     if use_method_1:
@@ -256,18 +263,18 @@ def HEALpixMicrolensingSlicer(t0,u0,tE,
     # We simulate a single event for each HEALpixel in the desired survey region,
     # owing to the constraints on how HEALpixel slicers are computed.
     # A set of events is accumulated by repeating the calculation for over the map
-    slicer = maf.slicers.HealpixSlicer(nside=NSIDE, useCache=False)
+    slicer = maf.slicers.healpix_slicer.HealpixSlicer(nside=NSIDE, use_cache=False)
 
     # Add the additional microlensing information about each object to the slicer.
     # In effect this simulates the same event happening at every HEALpix on the sky
-    slicer.slicePoints["peak_time"] = np.array( [t0] )
-    slicer.slicePoints["crossing_time"] = np.array( [tE] )
-    slicer.slicePoints["impact_parameter"] = np.array( [u0] )
+    slicer.slice_points["peak_time"] = np.array( [t0] )
+    slicer.slice_points["crossing_time"] = np.array( [tE] )
+    slicer.slice_points["impact_parameter"] = np.array( [u0] )
 
     return slicer
 
 def calc_microlensing_metrics(opsim_db, runName, desired_healpix,
-                t0, u0, tE):
+                t0, u0, tE, metric_calc='detect'):
     """Based on a notebook by Peter Yoachim and metric by Natasha Abrams, Markus Hundertmark
     and TVS Microlensing group:
     https://github.com/lsst/rubin_sim_notebooks/blob/main/maf/science/Microlensing%20Metric.ipynb
@@ -277,8 +284,8 @@ def calc_microlensing_metrics(opsim_db, runName, desired_healpix,
 
     constraint = 'fiveSigmaDepth > 21.5'
     plotDict = {'colorMax': 950}
-    metric = maf.mafContrib.microlensingMetric.MicrolensingMetric(metricCalc="detect")
-    summaryMetrics = maf.batches.lightcurveSummary()
+    metric = maf.maf_contrib.microlensing_metric.MicrolensingMetric(metric_calc=metric_calc)
+    summaryMetrics = maf.batches.common.lightcurve_summary()
 
     # Microlensing metric requires a customized dataSlicer, to which the
     # desired event parameter ranges have been appended.  The metric is run
@@ -296,26 +303,28 @@ def calc_microlensing_metrics(opsim_db, runName, desired_healpix,
                                             nside=NSIDE,
                                             filtername="r")
 
-    bundleList.append( maf.MetricBundle(metric, slicer, None, runName=runName,
-                                            summaryMetrics=summaryMetrics,
-                                            info_label=f'tE {tE} days') )
+    bundleList.append( maf.metric_bundles.metric_bundle.MetricBundle(
+                                metric, slicer, None, run_name=runName,
+                                summary_metrics=summaryMetrics,
+                                info_label=f'tE {tE} days') )
 
     # Now we can make the metric bundle, and run the metrics:
-    bundleDict = maf.metricBundles.makeBundlesDictFromList(bundleList)
-    bundleGroup = maf.MetricBundleGroup(bundleDict, opsim_db, outDir='test', resultsDb=None)
-    bundleGroup.runAll()
+    bundleDict = maf.metric_bundles.metric_bundle_group.make_bundles_dict_from_list(bundleList)
+    bundleGroup = maf.metric_bundles.metric_bundle_group.MetricBundleGroup(
+        bundleDict, opsim_db, out_dir='test', results_db=None)
+    bundleGroup.run_all()
 
     # Extract the values of the metric per HEALpixel as a map:
     outputName = runName.replace('.','_')+\
-                '_MicrolensingMetric_detect_tE_'+\
+                '_MicrolensingMetric_' + metric_calc + '_tE_'+\
                     str(tE).replace('.','_')+\
                         '_days_'
     if USE_USER_SLICER:
         outputName = outputName + 'USER'
-        metric_data = bundleDict[outputName].metricValues
+        metric_data = bundleDict[outputName].metric_values
     else:
         outputName = outputName + 'HEAL'
-        metric_data = bundleDict[outputName].metricValues.filled(0.0)
+        metric_data = bundleDict[outputName].metric_values.filled(0.0)
 
     return metric_data
 
@@ -324,12 +333,14 @@ def get_args():
     params = {}
     if len(argv) == 1:
         params['opSim_db_file'] = input('Please enter the path to the OpSim database: ')
+        params['metric_calc'] = input('Please enter the metric_calc mode of the microlensing metric to use: ')
         params['map_file_path'] = input('Please enter the path to the GP footprint map: ')
         params['output_dir'] = input('Please enter the path to the output directory: ')
     else:
         params['opSim_db_file'] = argv[1]
-        params['map_file_path'] = argv[2]
-        params['output_dir'] = argv[3]
+        params['metric_calc'] = argv[2]
+        params['map_file_path'] = argv[3]
+        params['output_dir'] = argv[4]
 
     return params
 

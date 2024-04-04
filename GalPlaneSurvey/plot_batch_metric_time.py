@@ -221,7 +221,7 @@ def plot_heat_map(params,metric_data,zmax=100.0):
 
     norm = mpl.colors.Normalize(data_grid.min(), data_grid.max())
 
-    fig, ax = plt.subplots(figsize=(len(opsim_list),len(TAU_OBS)+1))
+    fig, ax = plt.subplots(figsize=(len(opsim_list)+1,len(TAU_OBS)+1))
     ax.pcolormesh(xgrid, ygrid, data_grid, cmap="magma", norm=norm)
     ax.set_frame_on(False) # remove all spines
 
@@ -240,12 +240,12 @@ def plot_heat_map(params,metric_data,zmax=100.0):
     #  y coordinate for bottom border,
     #  width,
     #  height)
-    #fig.subplots_adjust(bottom=0.25)
+    fig.subplots_adjust(bottom=0.25, left=0.1, right=0.8)
     #cbar_ax = fig.add_axes([0.3, -0.05, 0.4, 0.025])
 
     cb = fig.colorbar(
         ScalarMappable(norm=norm, cmap="magma"),
-        #cax=cbar_ax, # Pass the new axis
+        ax=ax, # Pass the new axis
         orientation = "vertical")
 
     # Remove tick marks

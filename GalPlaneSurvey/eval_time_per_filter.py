@@ -1,7 +1,7 @@
 import os
 from sys import argv
-from sys import path as pythonpath
-pythonpath.append('/Users/rstreet1/software/rubin_sim_gal_plane/rubin_sim/maf/metrics/')
+#from sys import path as pythonpath
+#pythonpath.append('/Users/rstreet1/software/rubin_sim_gal_plane/rubin_sim/maf/metrics/')
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,7 +15,7 @@ from astropy.coordinates import Galactic, TETE, SkyCoord
 from astropy.io import fits
 #from eval_survey_cadence import load_map_data, get_priority_threshold, plot_map_data
 import compare_survey_footprints
-from rubin_sim.maf.metrics import galacticPlaneMetrics
+from rubin_sim.maf.metrics import galactic_plane_metrics
 
 NSIDE = 64
 NPIX = hp.nside2npix(NSIDE)
@@ -31,7 +31,7 @@ def run_metrics(params):
 
     # Load the current OpSim database
     runName = os.path.split(params['opSim_db_file'])[-1].replace('.db', '')
-    opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
+    #opsim_db = maf.OpsimDatabase(params['opSim_db_file'])
 
     # Load the Galactic Plane Survey footprint map data
     map_data_table = compare_survey_footprints.load_map_data(params['map_file_path'])
@@ -109,7 +109,7 @@ def eval_filters_by_region(params,bundleDict,runName,
 
         # Retrieve the metric data in a map array:
         outputName = 'GalplaneTimePerFilter_'+mapName+'_'+f
-        metric_data = bundleDict[outputName].metricValues.filled(0.0)
+        metric_data = bundleDict[outputName].metric_values.filled(0.0)
 
         # Calculate summary metrics over all HEALpix:
         fomData = {}
@@ -139,23 +139,23 @@ def eval_filters_by_region(params,bundleDict,runName,
 def calc_filter_metric(opsim_db, runName, mapName, diagnostics=False):
     bundleList = []
 
-    metric1 = maf.metrics.CountMetric(col=['night'], metricName='Nvis')
-    metric2 = galacticPlaneMetrics.GalPlaneTimePerFilterMetric(science_map=mapName)
+    metric1 = maf.metrics.simple_metrics.CountMetric(col=['night'], metric_name='Nvis')
+    metric2 = galactic_plane_metrics.GalPlaneTimePerFilterMetric(science_map=mapName)
 
     constraint = 'fiveSigmaDepth > 21.5'
-    slicer = maf.slicers.HealpixSlicer(nside=NSIDE)
+    slicer = maf.slicers.healpix_slicer.HealpixSlicer(nside=NSIDE)
     plotDict = {'colorMax': 950}
 
-    bundleList.append(maf.MetricBundle(metric1, slicer, constraint, runName=runName, plotDict=plotDict))
-    bundleList.append(maf.MetricBundle(metric2, slicer, constraint, runName=runName, plotDict=plotDict))
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric1, slicer, constraint, run_name=runName, plot_dict=plotDict))
+    bundleList.append(maf.metric_bundles.metric_bundle.MetricBundle(metric2, slicer, constraint, run_name=runName, plot_dict=plotDict))
 
-    bundleDict = maf.metricBundles.makeBundlesDictFromList(bundleList)
-    bundleGroup = maf.MetricBundleGroup(bundleDict, opsim_db, outDir='test',
-                                        resultsDb=None)
-    bundleGroup.runAll()
+    bundleDict = maf.metric_bundles.metric_bundle_group.make_bundles_dict_from_list(bundleList)
+    bundleGroup = maf.metric_bundles.metric_bundle_group.MetricBundleGroup(bundleDict, opsim_db, out_dir='test',
+                                        results_db=None)
+    bundleGroup.run_all()
 
     if diagnostics:
-        bundleGroup.plotAll(closefigs=False)
+        bundleGroup.plot_all(close_figs=False)
 
     return bundleDict
 

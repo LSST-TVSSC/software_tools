@@ -88,7 +88,7 @@ def compare_cadence_FoMpercent(plot_order, sim_data, metricName, args):
         k += 1
 
     plt.yticks(y_pos, plot_order)
-    plt.subplots_adjust(left=0.50, bottom=0.1, right=0.95, top=0.95, wspace=0, hspace=0)
+    plt.subplots_adjust(left=0.225, bottom=0.2, right=0.95, top=0.80, wspace=0, hspace=0)
 
     plt.title(metricName, fontsize=fontsize)
     plt.xlabel('% of ideal', fontsize=fontsize)
@@ -99,11 +99,11 @@ def compare_cadence_FoMpercent(plot_order, sim_data, metricName, args):
     #plt.legend(fontsize=fontsize)
 
     box = ax.get_position()
-    ax.set_position([box.x0, box.y0 + box.height * -0.001,
+    ax.set_position([box.x0, box.y0 + box.height * 0.001,
              box.width, box.height * 0.95])
 
     if metricName == 'VIM':
-        loc = (0.05, 1.12)
+        loc = (0.35, 1.4)
     else:
         loc = (0.25, 1.12)
     l = ax.legend(loc='upper center', bbox_to_anchor=loc,
@@ -113,7 +113,7 @@ def compare_cadence_FoMpercent(plot_order, sim_data, metricName, args):
     if len(l.legendHandles) > 1:
         l.legendHandles[1]._sizes = [50]
 
-    plt.savefig(path.join('cadence_results',args['plot_name']+'_'+args['science_map']+'_'+metricName+'_barchart.png'))
+    plt.savefig(path.join(args['output_dir'],args['plot_name']+'_'+args['science_map']+'_'+metricName+'_barchart.png'))
 
 def parse_data_file(data_file, science_map):
 
@@ -212,7 +212,8 @@ def load_sims_list(args):
     file_lines = open(args['sim_list'],'r').readlines()
     sim_list = []
     for line in file_lines:
-        sim_list.append(line.replace('\n',''))
+        entries = line.replace('\n','').split()
+        sim_list.append(entries[1])
 
     return sim_list
 
@@ -230,9 +231,11 @@ if __name__ == '__main__':
         args['plot_name'] = input('Please enter the name for the output plot: ')
         print('List of science maps available: \n' + repr(science_maps))
         args['science_map'] = input('Please select the science map to plot for: ')
+        args['output_dir'] = input('Please enter the path to the directory for output: ')
     else:
         args['sim_list'] = argv[1]
         args['plot_name'] = argv[2]
         args['science_map'] = argv[3]
+        args['output_dir'] = argv[4]
 
     plot(args)

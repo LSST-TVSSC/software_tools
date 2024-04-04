@@ -3,3 +3,6 @@ dust_maps
 test_file.fits
 .ipynb_checkpoints/
 venv/
+*.pyc
+test/
+.idea
