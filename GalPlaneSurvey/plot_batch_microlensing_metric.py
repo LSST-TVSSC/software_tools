@@ -12,7 +12,8 @@ MICROLENSING_METRICS = ['numberTotalEventsDetected',
                         'numberTotalEvents',
                         'percentTotalEvents',
                         'medianPercentEventsHEALpixel',
-                        'stddevPercentEventsHEALpixel']
+                        'stddevPercentEventsHEALpixel',
+                        'medianNptsPerEventPerHEALpixel']
 def plot_microlensing_results(args):
     """
     Function to plot a heatmap comparing the results of microlensing metrics for different
@@ -26,7 +27,7 @@ def plot_microlensing_results(args):
     # Load the metric data for each opsim and survey region, then
     # select the data for the specific metric in a format
     # convenient for plotting
-    results_data, map_list = parse_opsim_results(opsim_results)
+    results_data, map_list = parse_opsim_results(args, opsim_results)
     metric_data = select_metric_data(args, results_data)
 
     # Plot a heatmap of the metric results for the requested metric and event timescale
@@ -104,7 +105,7 @@ def plot_heat_map(args, metric_data, map_list):
 
     plt.tight_layout()
     plot_file = path.join(args.output_dir,
-                          args.metric+'_'+args.tau+'_opsim_microlensing_comparison_heatmap.png')
+                          args.metric+'_'+args.tau+'_opsim_microlensing_'+args.metric_calc+'_comparison_heatmap.png')
     print('Plot output to '+plot_file)
     plt.savefig(plot_file)
     plt.close()
@@ -119,7 +120,7 @@ def select_metric_data(args, results_data):
                                     tau_data[args.metric]])
 
     return metric_data
-def parse_opsim_results(opsim_results):
+def parse_opsim_results(args, opsim_results):
     """
     Function to load the metric data for a set of results files for multiple opsims
     """
@@ -127,7 +128,7 @@ def parse_opsim_results(opsim_results):
     results_data = {}
     map_list = []
     for opsim, results_file in opsim_results.items():
-        dataset = parse_microlensing_results(results_file)
+        dataset = parse_microlensing_results(args, results_file)
         results_data[opsim] = dataset
 
         # Extract a list of the maps included in the results.
@@ -138,12 +139,13 @@ def parse_opsim_results(opsim_results):
 
     return results_data, map_list
 
-def parse_microlensing_results(data_file):
+def parse_microlensing_results(args, data_file):
     """
     Function to load the results of the microlensing metric calculated per survey regions,
     for a single opsim.
 
     Expected file format is:
+    [detect algorithm]
     # Col 1: runName
     # Col 2: mapName
     # Col 3: tau
@@ -152,6 +154,12 @@ def parse_microlensing_results(data_file):
     # Col 6: percentTotalEvents
     # Col 7: median percent events detected per HEALpixel
     # Col 8: stddev percent events detected per HEALpixel
+    [Npts algorithm]
+    # Col 1: runName
+    # Col 2: mapName
+    # Col 3: tau
+    # Col 4: numberTotalEvents
+    # Col 5: median Npts per event per HEALpixel
     """
 
     if not path.isfile(data_file):
@@ -167,35 +175,57 @@ def parse_microlensing_results(data_file):
             tau = entries[2]
             mapName = entries[1]
             runName = entries[0]
-            metric1 = float(entries[3])
-            metric2 = float(entries[4])
-            metric3 = float(entries[5])
-            metric4 = float(entries[6])
-            metric5 = float(entries[7])
-            if tau in dataset.keys():
-                tau_data = dataset[tau]
+            if args.metric_calc == 'detect':
+                metric1 = float(entries[3])
+                metric2 = float(entries[4])
+                metric3 = float(entries[5])
+                metric4 = float(entries[6])
+                metric5 = float(entries[7])
+                if tau in dataset.keys():
+                    tau_data = dataset[tau]
+                else:
+                    tau_data = {'maps': [], 'runName': [],
+                                'numberTotalEventsDetected': [], 'numberTotalEvents': [],
+                                'percentTotalEvents': [], 'medianPercentEventsHEALpixel': [],
+                                'stddevPercentEventsHEALpixel': []}
+                tau_data['maps'].append(mapName.replace('_map',''))
+                tau_data['runName'].append(runName)
+                tau_data['numberTotalEventsDetected'].append(metric1)
+                tau_data['numberTotalEvents'].append(metric2)
+                tau_data['percentTotalEvents'].append(metric3)
+                tau_data['medianPercentEventsHEALpixel'].append(metric4)
+                tau_data['stddevPercentEventsHEALpixel'].append(metric5)
             else:
-                tau_data = {'maps': [], 'runName': [],
-                            'numberTotalEventsDetected': [], 'numberTotalEvents': [],
-                            'percentTotalEvents': [], 'medianPercentEventsHEALpixel': [],
-                            'stddevPercentEventsHEALpixel': []}
-            tau_data['maps'].append(mapName.replace('_map',''))
-            tau_data['runName'].append(runName)
-            tau_data['numberTotalEventsDetected'].append(metric1)
-            tau_data['numberTotalEvents'].append(metric2)
-            tau_data['percentTotalEvents'].append(metric3)
-            tau_data['medianPercentEventsHEALpixel'].append(metric4)
-            tau_data['stddevPercentEventsHEALpixel'].append(metric5)
+                metric1 = float(entries[3])
+                metric2 = float(entries[4])
+                if tau in dataset.keys():
+                    tau_data = dataset[tau]
+                else:
+                    tau_data = {'maps': [], 'runName': [],
+                                'numberTotalEvents': [],
+                                'medianNptsPerEventPerHEALpixel': []}
+                tau_data['maps'].append(mapName.replace('_map',''))
+                tau_data['runName'].append(runName)
+                tau_data['numberTotalEvents'].append(metric1)
+                tau_data['medianNptsPerEventPerHEALpixel'].append(metric2)
+
             dataset[tau] = tau_data
 
     for tau, tau_data in dataset.items():
-        tab = Table([Column(tau_data['maps'], name='maps'),
-                     Column(tau_data['runName'], name='runName'),
-                     Column(tau_data['numberTotalEventsDetected'], name='numberTotalEventsDetected', dtype=float),
-                     Column(tau_data['numberTotalEvents'], name='numberTotalEvents', dtype=float),
-                     Column(tau_data['percentTotalEvents'], name='percentTotalEvents', dtype=float),
-                     Column(tau_data['medianPercentEventsHEALpixel'], name='medianPercentEventsHEALpixel', dtype=float),
-                     Column(tau_data['stddevPercentEventsHEALpixel'], name='stddevPercentEventsHEALpixel', dtype=float),])
+        if args.metric_calc == 'detect':
+            tab = Table([Column(tau_data['maps'], name='maps'),
+                         Column(tau_data['runName'], name='runName'),
+                         Column(tau_data['numberTotalEventsDetected'], name='numberTotalEventsDetected', dtype=float),
+                         Column(tau_data['numberTotalEvents'], name='numberTotalEvents', dtype=float),
+                         Column(tau_data['percentTotalEvents'], name='percentTotalEvents', dtype=float),
+                         Column(tau_data['medianPercentEventsHEALpixel'], name='medianPercentEventsHEALpixel', dtype=float),
+                         Column(tau_data['stddevPercentEventsHEALpixel'], name='stddevPercentEventsHEALpixel', dtype=float),])
+        else:
+            tab = Table([Column(tau_data['maps'], name='maps'),
+                         Column(tau_data['runName'], name='runName'),
+                         Column(tau_data['numberTotalEvents'], name='numberTotalEvents', dtype=float),
+                         Column(tau_data['medianNptsPerEventPerHEALpixel'], name='medianNptsPerEventPerHEALpixel', dtype=float),])
+
         dataset[tau] = tab
 
     return dataset
@@ -205,6 +235,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('sim_results_list', help='List of files containing microlensing metric results for different OpSims')
     parser.add_argument('metric', help='Name of the metric to plot, one of: ' + repr(MICROLENSING_METRICS))
+    parser.add_argument('metric_calc', help='Mode option of microlensing metric, one of detect, Npts')
     parser.add_argument('tau', help='Event timescale to be plotted, one of: ' + repr(EVENT_TIMESCALES))
     parser.add_argument('output_dir', help='Path to output directory')
     args = parser.parse_args()

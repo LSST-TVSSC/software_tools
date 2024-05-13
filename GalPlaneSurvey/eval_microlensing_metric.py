@@ -35,15 +35,22 @@ def run_metrics(params):
     map_data_table = compare_survey_footprints.load_map_data(params['map_file_path'])
 
     # Log file:
-    logfile = open(os.path.join(params['output_dir'],runName+'_microlensing_data.txt'),'w')
-    logfile.write('# Col 1: runName\n')
-    logfile.write('# Col 2: mapName\n')
-    logfile.write('# Col 3: tau\n')
-    logfile.write('# Col 4: numberTotalEventsDetected\n')
-    logfile.write('# Col 5: numberTotalEvents\n')
-    logfile.write('# Col 6: percentTotalEvents\n')
-    logfile.write('# Col 7: median percent events detected per HEALpixel\n')
-    logfile.write('# Col 8: stddev percent events detected per HEALpixel\n')
+    logfile = open(os.path.join(params['output_dir'],runName+'_microlensing_'+params['metric_calc']+'_data.txt'),'w')
+    if params['metric_calc'] == 'detect':
+        logfile.write('# Col 1: runName\n')
+        logfile.write('# Col 2: mapName\n')
+        logfile.write('# Col 3: tau\n')
+        logfile.write('# Col 4: numberTotalEventsDetected\n')
+        logfile.write('# Col 5: numberTotalEvents\n')
+        logfile.write('# Col 6: percentTotalEvents\n')
+        logfile.write('# Col 7: median percent events detected per HEALpixel\n')
+        logfile.write('# Col 8: stddev percent events detected per HEALpixel\n')
+    else:
+        logfile.write('# Col 1: runName\n')
+        logfile.write('# Col 2: mapName\n')
+        logfile.write('# Col 3: tau\n')
+        logfile.write('# Col 4: numberTotalEvents\n')
+        logfile.write('# Col 5: medianNptsPerEventPerHEALpixel\n')
 
     # For efficiency, recode this to use the UserPointSlicer, and calculate it
     # for the combined, GP, Bulge, MCs and pencilbeams maps respectively
@@ -101,25 +108,27 @@ def run_metrics(params):
 
         for tau in tau_range:
             metric_data = metric_maps[tau]
-            print(metric_data)
-            breakpoint
-            print(metric_data[desired_healpix])
 
             FoM = MicrolensingFiguresOfMerit()
+            FoM.metric_calc = params['metric_calc']
             FoM.mapName = mapName
             FoM.runName = runName
             FoM.tau = tau
-            FoM.nTotalEventsDetected = int(metric_data[desired_healpix].sum())
             FoM.nTotalEventsSimulated = nevents_per_hp*len(desired_healpix)
-            FoM.percentTotalEvents = (metric_data[desired_healpix].sum()/float(nevents_per_hp*len(desired_healpix)))*100.0
-            FoM.medPercentDetectedPixel = np.median( (metric_data[desired_healpix]/float(nevents_per_hp))*100.0 )
-            FoM.stdPercentDetectedPixel = ((metric_data[desired_healpix]/float(nevents_per_hp))*100.0).std()
+            if FoM.metric_calc == 'detect':
+                FoM.nTotalEventsDetected = int(metric_data[desired_healpix].sum())
+                FoM.percentTotalEvents = (metric_data[desired_healpix].sum()/float(nevents_per_hp*len(desired_healpix)))*100.0
+                FoM.medPercentDetectedPixel = np.median( (metric_data[desired_healpix]/float(nevents_per_hp))*100.0 )
+                FoM.stdPercentDetectedPixel = ((metric_data[desired_healpix]/float(nevents_per_hp))*100.0).std()
+            else:
+                FoM.medNptsPerEvent = np.median(metric_data[desired_healpix])
             FoM.record(logfile)
 
     logfile.close()
 
 class MicrolensingFiguresOfMerit:
     def __init__(self):
+        self.metric_calc = None
         self.tau = None
         self.tau_var = None
         self.runName = None
@@ -129,14 +138,21 @@ class MicrolensingFiguresOfMerit:
         self.percentTotalEvents = None
         self.medPercentDetectedPixel = None
         self.stdPercentDetectedPixel = None
+        self.medNptsPerEvent = None
 
     def record(self,logfile):
-        logfile.write(self.runName+' '+self.mapName+' '+\
+        if self.metric_calc == 'detect':
+            logfile.write(self.runName+' '+self.mapName+' '+\
                         str(self.tau)+' '+str(self.nTotalEventsDetected)+' '+\
                         str(round(self.nTotalEventsSimulated,2))+' '+\
                         str(round(self.percentTotalEvents,2))+' '+\
                         str(round(self.medPercentDetectedPixel,2))+' '+\
                         str(round(self.stdPercentDetectedPixel,2))+'\n')
+        else:
+            logfile.write(self.runName+' '+self.mapName+' '+\
+                        str(self.tau)+' '+\
+                        str(round(self.nTotalEventsSimulated,2))+' '+\
+                        str(round(self.medNptsPerEvent,2))+'\n')
 
 def get_radec_desired_pixels(desired_pixels):
 
