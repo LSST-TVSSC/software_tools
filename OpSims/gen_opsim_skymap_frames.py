@@ -123,7 +123,11 @@ for i in range(args.start_frame, args.end_frame+1, 1):
         alpha=1.0
     )
 
-    plt.savefig(path.join(OUTPUT_DIR, 'frame_'+str(i)+'.png'))
+    idx = str(i)
+    while len(idx) < len(str(max_frames)):
+        idx = '0' + idx
+
+    plt.savefig(path.join(OUTPUT_DIR, 'frame_' + idx + '.png'))
     plt.close()
 
     t2 = datetime.now(UTC)
