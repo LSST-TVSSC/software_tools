@@ -81,4 +81,4 @@ def update(i):
 # Create the animation
 ani = animation.FuncAnimation(fig=mw1.fig, func=update, frames=5, interval=30)
 #plt.show()
-ani.save(filename=path.join(OUTPUT_DIR, DB_FILE.replace('.db', 'mp4')), writer="imagemagick")
+ani.save(filename=path.join(OUTPUT_DIR, DB_FILE.replace('.db', '.apng')), writer="pillow")
